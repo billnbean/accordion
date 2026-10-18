@@ -1,0 +1,224 @@
+<title>Mekanisme Regulasi Diri A4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout ringkas untuk iframe sekitar 614 x 560 px: baris atas = kartu 2x2 + diagram siklus, di bawahnya 9 panel accordion. */
+:root {
+  --bg: #F0F5F4; --surface: #FFFFFF; --ink: #0A2540; --muted: #476175; --line: #D3E1E0;
+  --teal: #2EC4B6; --teal-text: #0F7580; --tint: #E2F6F3; --orange: #E9A23B; --orange-tint: #FBF0DC;
+  --navy: #0A2540; --on-navy: #FFFFFF; --dot-z: #0A2540; --dot-s: #A8E6DF;
+  --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1B2B; --surface: #12283C; --ink: #E8F1F0; --muted: #9DB4C2; --line: #26425C;
+    --teal-text: #62D8CC; --tint: #123A42; --orange: #EBAE55; --orange-tint: #3A3020;
+    --navy: #25507A; --dot-z: #7FA6CC; --dot-s: #3D7F7A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1B2B; --surface: #12283C; --ink: #E8F1F0; --muted: #9DB4C2; --line: #26425C;
+  --teal-text: #62D8CC; --tint: #123A42; --orange: #EBAE55; --orange-tint: #3A3020;
+  --navy: #25507A; --dot-z: #7FA6CC; --dot-s: #3D7F7A; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.5;
+  padding-block: 6px 8px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+
+.duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.concept { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.concept header { display: flex; flex-direction: column; gap: 1px; }
+.concept header b { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; gap: 7px; }
+.concept header span { font-size: 11px; color: var(--muted); padding-left: 17px; }
+.concept i, .gh i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.concept .cards, .concept .cycle { flex: 1; }
+.gh { margin: 4px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 7px; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.card {
+  appearance: none; font: inherit; text-align: left; color: inherit; cursor: pointer;
+  background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 9px 10px;
+  display: flex; flex-direction: column; gap: 3px; min-width: 0; transition: border-color .18s;
+}
+.card:hover { border-color: var(--teal); }
+.card .h { display: flex; align-items: center; gap: 7px; }
+.card .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); flex: none; }
+.card h3 { margin: 0; font-size: 13.5px; font-weight: 800; }
+.card p { margin: 0; font-size: 11.5px; line-height: 1.35; color: var(--muted); }
+.cycle { background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 4px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; }
+.cycle svg { width: 100%; max-width: 190px; height: auto; display: block; }
+.ring { fill: none; stroke: var(--line); stroke-width: 2.5; stroke-dasharray: 2 6; stroke-linecap: round; }
+.arrowhead { fill: var(--teal-text); }
+.node { cursor: pointer; }
+.node circle { transition: transform .18s; transform-box: fill-box; transform-origin: center; }
+.node:hover circle { transform: scale(1.07); }
+.node text { font-family: var(--font); font-weight: 800; font-size: 9.6px; pointer-events: none; }
+.hub { font-family: var(--font); font-weight: 800; font-size: 10px; fill: var(--ink); }
+
+.acc { display: flex; flex-direction: column; gap: 4px; }
+.item { background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; transition: border-color .18s; }
+.item.open { border-color: var(--teal); }
+.item h3 { margin: 0; }
+.trigger {
+  appearance: none; width: 100%; background: none; border: 0; font: inherit; color: var(--ink); text-align: left; cursor: pointer;
+  display: flex; align-items: center; gap: 10px; padding: 0 12px; min-height: 35px;
+}
+.trigger .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.trigger .t { flex: 1; font-weight: 700; font-size: 13.5px; min-width: 0; }
+.trigger .t small { font-weight: 500; font-size: 11.5px; color: var(--muted); margin-left: 4px; }
+.trigger .ico { width: 16px; height: 16px; position: relative; flex: none; color: var(--teal-text); }
+.trigger .ico::before, .trigger .ico::after { content: ""; position: absolute; left: 2px; right: 2px; top: 7px; height: 2px; background: currentColor; border-radius: 1px; transition: transform .22s; }
+.trigger .ico::after { transform: rotate(90deg); }
+.item.open .ico::after { transform: rotate(0); }
+.trigger:focus-visible, .card:focus-visible, .node:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.d-b { background: var(--teal); } .d-f { background: var(--orange); } .d-z { background: var(--dot-z); } .d-s { background: var(--dot-s); box-shadow: inset 0 0 0 1.5px var(--teal); }
+.panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .26s ease; }
+.item.open .panel { grid-template-rows: 1fr; }
+.panel > div { overflow: hidden; min-height: 0; }
+.body { padding: 2px 12px 12px 33px; display: flex; flex-direction: column; gap: 9px; }
+.row h4 { margin: 0 0 1px; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--teal-text); }
+.row p, .row ul { margin: 0; font-size: 13.5px; }
+.row ul { padding-left: 17px; display: flex; flex-direction: column; gap: 1px; }
+.try { background: var(--tint); border-radius: 8px; padding: 8px 10px; }
+.warn { margin: 0; background: var(--orange-tint); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; }
+.quote { margin: 0; font-size: 13.5px; line-height: 1.55; }
+.steps { display: flex; flex-direction: column; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.steps li { display: grid; grid-template-columns: 5px minmax(0, 1fr); gap: 9px; }
+.steps li::before { content: ""; border-radius: 3px; background: var(--c); }
+.steps b { display: block; font-size: 12.5px; }
+.steps span { font-size: 13px; color: var(--muted); }
+@media (max-width: 480px) { .duo { grid-template-columns: minmax(0, 1fr); } .body { padding-left: 12px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <div class="duo">
+    <section class="concept">
+      <header><b><i class="d-b"></i>Konsep Baumeister</b><span>Empat komponen · Baumeister &amp; Vohs (2007)</span></header>
+      <div class="cards">
+      <button class="card" data-open="p1" type="button"><span class="h"><span class="dot"></span><h3>Standar</h3></span><p>Tujuan atau patokan yang ingin dicapai.</p></button>
+      <button class="card" data-open="p2" type="button"><span class="h"><span class="dot"></span><h3>Motivasi</h3></span><p>Dorongan tetap berusaha saat lelah atau kecewa.</p></button>
+      <button class="card" data-open="p3" type="button"><span class="h"><span class="dot"></span><h3>Pemantauan</h3></span><p>Sadar akan pikiran, emosi, dan tindakan saat itu juga.</p></button>
+      <button class="card" data-open="p4" type="button"><span class="h"><span class="dot"></span><h3>Energi Mental</h3></span><p>Tenaga psikologis yang menopang tiga lainnya.</p></button>
+    </div>
+    </section>
+    <section class="concept">
+      <header><b><i class="d-z"></i>Konsep Zimmerman</b><span>Siklus tiga tahap · Zimmerman (2002)</span></header>
+      <figure class="cycle" style="margin:0">
+      <svg viewBox="0 0 200 190" role="group" aria-label="Siklus Zimmerman: Perencanaan, Pemantauan, Refleksi, lalu kembali ke Perencanaan">
+        <circle class="ring" cx="100" cy="100" r="64"/>
+        <polygon class="arrowhead" points="5,0 -4.5,-5 -4.5,5" transform="translate(155.4 68) rotate(60)"/>
+        <polygon class="arrowhead" points="5,0 -4.5,-5 -4.5,5" transform="translate(100 164) rotate(180)"/>
+        <polygon class="arrowhead" points="5,0 -4.5,-5 -4.5,5" transform="translate(44.6 68) rotate(300)"/>
+        <text class="hub" x="100" y="104" text-anchor="middle">SRL</text>
+        <g class="node" tabindex="0" role="button" aria-label="Buka Perencanaan" data-open="p6"><circle cx="100" cy="36" r="33" fill="#2EC4B6"/><text x="100" y="39.5" text-anchor="middle" fill="#0A2540">Perencanaan</text></g>
+        <g class="node" tabindex="0" role="button" aria-label="Buka Pemantauan" data-open="p7"><circle cx="155.4" cy="132" r="33" fill="var(--navy)"/><text x="155.4" y="135.5" text-anchor="middle" fill="var(--on-navy)">Pemantauan</text></g>
+        <g class="node" tabindex="0" role="button" aria-label="Buka Refleksi" data-open="p8"><circle cx="44.6" cy="132" r="33" fill="#E9A23B"/><text x="44.6" y="135.5" text-anchor="middle" fill="#0A2540">Refleksi</text></g>
+      </svg>
+      </figure>
+    </section>
+  </div>
+
+  <div class="acc">
+    <div class="item" id="p1"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p1b"><span class="dot d-b"></span><span class="t">Standar<small>Baumeister</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p1b" role="region"><div><div class="body">
+        <div class="row"><h4>Apa itu</h4><p>Patokan perilaku dan tujuan yang kita pegang sebagai pendidik.</p></div>
+        <div class="row"><h4>Tanda saat melemah</h4><p>Ragu harus merespons bagaimana; mudah mengikuti emosi sesaat.</p></div>
+        <div class="row"><h4>Contoh di kelas PNF</h4><p>Berpegang pada prinsip: setiap murid harus merasa dihargai, termasuk yang sering terlambat.</p></div>
+        <div class="row try"><h4>Coba ini</h4><p>Tulis satu kalimat standar pribadi Anda dan tempel di buku absensi.</p></div>
+      </div></div></div></div>
+
+    <div class="item" id="p2"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p2b"><span class="dot d-b"></span><span class="t">Motivasi<small>Baumeister</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p2b" role="region"><div><div class="body">
+        <div class="row"><h4>Apa itu</h4><p>Dorongan untuk tetap menjalankan standar saat keadaan sulit.</p></div>
+        <div class="row"><h4>Tanda saat melemah</h4><p>Muncul pikiran "Untuk apa repot-repot menyiapkan materi?"</p></div>
+        <div class="row"><h4>Contoh di kelas PNF</h4><p>Mengingat kisah murid yang berhasil lulus kesetaraan.</p></div>
+        <div class="row try"><h4>Coba ini</h4><p>Simpan satu pesan terima kasih murid di ponsel untuk dibaca saat lelah.</p></div>
+      </div></div></div></div>
+
+    <div class="item" id="p3"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p3b"><span class="dot d-b"></span><span class="t">Pemantauan<small>Baumeister</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p3b" role="region"><div><div class="body">
+        <div class="row"><h4>Apa itu</h4><p>Kesadaran terhadap pikiran, emosi, dan tindakan pada saat itu juga.</p></div>
+        <div class="row"><h4>Tanda saat melemah</h4><p>Baru sadar sudah membentak setelah kejadian berlalu.</p></div>
+        <div class="row"><h4>Contoh di kelas PNF</h4><p>Menyadari dada mulai sesak saat banyak yang memegang ponsel, lalu menarik napas sebelum bicara.</p></div>
+        <div class="row try"><h4>Coba ini</h4><p>Latih "jeda 3 napas" sebelum menanggapi hal yang memancing emosi.</p></div>
+      </div></div></div></div>
+
+    <div class="item" id="p4"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p4b"><span class="dot d-b"></span><span class="t">Energi Mental<small>Baumeister</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p4b" role="region"><div><div class="body">
+        <div class="row"><h4>Apa itu</h4><p>Tenaga psikologis yang menopang ketiga komponen lain.</p></div>
+        <div class="row"><h4>Tanda saat melemah</h4><p>Cepat lelah, sulit fokus, mudah kesal, keputusan terasa berat.</p></div>
+        <div class="row"><h4>Contoh di kelas PNF</h4><p>Mengajar tiga kelompok berturut-turut tanpa jeda, lalu kehilangan kesabaran di kelompok ketiga.</p></div>
+        <div class="row try"><h4>Coba ini</h4><p>Jadwalkan jeda 5 menit antar sesi dan tetapkan satu hari tanpa tugas administrasi.</p></div>
+      </div></div></div></div>
+
+    <div class="item" id="p5"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p5b"><span class="dot d-f"></span><span class="t">Kelelahan Mental<small>Baumeister</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p5b" role="region"><div><div class="body">
+        <div class="row"><h4>Apa itu</h4><p>Kondisi ketika kapasitas psikologis terkuras akibat intensitas interaksi dengan murid yang beragam usia dan latar belakang, ditambah tuntutan administrasi dan tanggung jawab lain.</p></div>
+        <div class="row"><h4>Tanda-tanda umum</h4><ul>
+          <li>Mudah tersinggung atau kehilangan kesabaran</li>
+          <li>Sulit berkonsentrasi dan sering lupa</li>
+          <li>Kehilangan semangat menyiapkan pembelajaran</li>
+          <li>Merasa tidak ada yang cukup dan hanya ingin sesi cepat selesai</li></ul></div>
+        <div class="row try"><h4>Pemulihan awal</h4><p>Jeda singkat yang terjadwal, tidur cukup, berbagi cerita dengan sesama pendidik, dan menyederhanakan target hari itu.</p></div>
+        <p class="warn"><b>Catatan.</b> E-book ini bukan alat diagnosis. Jika kelelahan berlangsung lama dan mengganggu kehidupan sehari-hari, berbicaralah dengan tenaga profesional. Konsep ini masih terus diteliti; e-book memakainya sebagai kerangka berpikir reflektif, bukan klaim klinis.</p>
+      </div></div></div></div>
+
+    <div class="item" id="p6"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p6b"><span class="dot d-z"></span><span class="t">Perencanaan<small>Zimmerman</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p6b" role="region"><div><div class="body">
+        <div class="row"><h4>Apa itu</h4><p>Menganalisis tugas dan menetapkan target yang realistis sebelum belajar atau mengajar dimulai.</p></div>
+        <div class="row"><h4>Langkah praktis</h4><p>Pahami tugas, tetapkan target yang realistis, siapkan strategi dan cadangannya, pikirkan potensi lokal yang bisa dipakai.</p></div>
+        <div class="row try"><h4>Contoh</h4><p>"Hari ini cukup satu kompetensi, dengan 20 menit pertama untuk kegiatan ringan."</p></div>
+      </div></div></div></div>
+
+    <div class="item" id="p7"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p7b"><span class="dot d-z"></span><span class="t">Pemantauan<small>Zimmerman</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p7b" role="region"><div><div class="body">
+        <div class="row"><h4>Apa itu</h4><p>Mengawasi apakah strategi berjalan, secara langsung di lingkungan belajar yang dinamis.</p></div>
+        <div class="row"><h4>Langkah praktis</h4><p>Periksa sambil jalan: apakah strategi bekerja, bagaimana energi saya dan energi murid. Ubah strategi bila perlu.</p></div>
+        <div class="row try"><h4>Contoh</h4><p>Melihat banyak yang mulai lelah, lalu mengganti diskusi panjang dengan kerja kelompok.</p></div>
+      </div></div></div></div>
+
+    <div class="item" id="p8"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p8b"><span class="dot d-z"></span><span class="t">Refleksi<small>Zimmerman</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p8b" role="region"><div><div class="body">
+        <div class="row"><h4>Apa itu</h4><p>Mengevaluasi secara mendalam efektivitas metode yang dipakai, memanfaatkan potensi lokal, lalu memperbaikinya untuk pertemuan berikutnya.</p></div>
+        <div class="row"><h4>Langkah praktis</h4><p>Evaluasi setelah sesi: apa yang berhasil, apa yang diubah, dan bagaimana hubungan dengan murid. Catat untuk pertemuan berikutnya.</p></div>
+        <div class="row"><h4>Hubungan untuk belajar</h4><p>Rasa aman membuat murid berani belajar mandiri. Hubungan yang harmonis dibangun dari sikap menghargai, mendengar, dan memanfaatkan potensi lokal yang dekat dengan kehidupan mereka.</p></div>
+        <div class="row try"><h4>Contoh</h4><p>Menulis catatan singkat: apa yang berhasil, apa yang diubah.</p></div>
+      </div></div></div></div>
+
+    <div class="item" id="p9"><h3><button class="trigger" type="button" aria-expanded="false" aria-controls="p9b"><span class="dot d-s"></span><span class="t">Contoh Skenario<small>Ibu Marinah</small></span><span class="ico" aria-hidden="true"></span></button></h3>
+      <div class="panel" id="p9b" role="region"><div><div class="body">
+        <p class="quote">Setelah kejadian di kelas, Ibu Marinah menyiapkan pertemuan berikutnya. Ia mencatat bahwa murid datang sepulang kerja dan lelah. Ia merencanakan 15 menit awal untuk berbagi cerita, lalu materi dikaitkan dengan pengalaman mereka di pasar. Di tengah sesi ia memantau: ketika ada yang menguap, ia mengajak peregangan sambil bercanda. Seusai sesi ia mencatat apa yang berhasil dan menanyakan pendapat mereka. Hubungan di kelas pun menjadi lebih hangat.</p>
+        <ul class="steps">
+          <li style="--c:#2EC4B6"><div><b>Perencanaan</b><span>Menargetkan satu kompetensi, menyiapkan kegiatan pembuka ringan, dan memakai contoh hitungan dari pasar dekat PKBM.</span></div></li>
+          <li style="--c:var(--navy)"><div><b>Pemantauan</b><span>Melihat banyak yang sibuk dengan ponsel, ia menarik napas, lalu mengajak kerja kelompok kecil.</span></div></li>
+          <li style="--c:#E9A23B"><div><b>Refleksi</b><span>Menulis: "Contoh dari pasar membuat mereka bersuara. Minggu depan mulai dari pengalaman mereka."</span></div></li>
+        </ul>
+      </div></div></div></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var items = Array.prototype.slice.call(document.querySelectorAll('.item'));
+  function set(it, open) { it.classList.toggle('open', open); it.querySelector('.trigger').setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  function show(it, open) {
+    items.forEach(function (o) { set(o, o === it && open); });
+    if (open) setTimeout(function () { it.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' }); }, 280);
+  }
+  items.forEach(function (it) {
+    it.querySelector('.trigger').addEventListener('click', function () { show(it, !it.classList.contains('open')); });
+  });
+  document.querySelectorAll('[data-open]').forEach(function (el) {
+    function go() { show(document.getElementById(el.getAttribute('data-open')), true); }
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', function (e) { if (el.tagName !== 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); go(); } });
+  });
+})();
+</script>
